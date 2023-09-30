@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'groovy'
+    id 'org.springframework.boot' version '3.1.4'
+    id 'io.spring.dependency-management' version '1.1.3'
+    id 'io.freefair.lombok'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('testcontainers.version', "1.19.0")
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "org.flywaydb:flyway-core:9.22.2"
+    implementation project(':libs:bean-validation')
+
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // Use the awesome Spock testing and specification framework even with Java
+    testImplementation 'org.spockframework:spock-core:2.2-groovy-4.0'
+    testImplementation 'org.spockframework:spock-spring:2.2-groovy-4.0'
+    testImplementation 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'io.rest-assured:rest-assured'
+}
+
+// Apply a specific Java toolchain to ease working on different environments.
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+    testLogging {
+        events = ["PASSED", "FAILED", "SKIPPED"]
+        showStandardStreams = true
+        exceptionFormat = "full"
+    }
+}
